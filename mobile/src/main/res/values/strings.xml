@@ -4,5 +4,8 @@
     <string name="app_name">HelloWear</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="editText_hint1">Input letters</string>
+    <string name="textView_default"></string>
+    <string name="button_default1">Transfer!</string>
 
 </resources>

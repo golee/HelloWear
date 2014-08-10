@@ -11,14 +11,16 @@
     >
     
     <EditText
+        android:hint="@string/editText_hint1"
         android:layout_width="fill_parent"
         android:layout_height="50dp"
         android:layout_centerHorizontal="true"
+        android:padding="5dp"
         android:background="#abcdef"
-        android:id="@+id/editText1" />
+        android:id="@+id/editText1" />  
 
     <TextView
-        android:text="text"
+        android:text="@string/textView_default"
         android:textSize="20dp"
         android:background="#abcdef"
         android:layout_width= "fill_parent"
@@ -35,9 +37,11 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:background="#aaaaaa"
-        android:text="Transfer!"
+        android:text="@string/button_default1"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
+        android:id="@+id/button1"
+        android:onClick="onClick"
         />
 
 
