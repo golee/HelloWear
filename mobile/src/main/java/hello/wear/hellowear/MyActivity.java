@@ -36,8 +36,8 @@ public class MyActivity extends Activity {
     private static String TAG = new String("Jebum");
 
     private static String PATH;
-    private static String KEY_TITLE=11;
-    private static String KEY_IMAGE=12;
+    private static String KEY_TITLE="keytitle";
+    private static String KEY_IMAGE="keyimage";
 
     private int count = 0;
 

@@ -29,8 +29,8 @@ public class OngoingNotificationListenerService extends WearableListenerService 
     private static final int NOTIFICATION_ID = 1;
     private static GoogleApiClient mGoogleApiClient;
     private static String PATH;
-    private static String KEY_TITLE=11;
-    private static String KEY_IMAGE=12;
+    private static String KEY_TITLE="keytitle";
+    private static String KEY_IMAGE="keyimage";
 
 //    private static String EXTRA_TITLE;
  //   private static String EXTRA_IMAGE;
