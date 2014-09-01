@@ -1,7 +1,10 @@
 package hello.wear.hellowear;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,6 +14,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.wearable.Asset;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
+import com.google.android.gms.wearable.Wearable;
+
+import java.io.ByteArrayOutputStream;
+
 
 public class MyActivity extends Activity {
 
@@ -18,10 +32,43 @@ public class MyActivity extends Activity {
     private TextView mTextView;
     private Button mButton;
 
+    private static GoogleApiClient mGoogleApiClient;
+    private static String TAG = new String("Jebum");
+
+    private static String PATH;
+    private static String KEY_TITLE=11;
+    private static String KEY_IMAGE=12;
+
+    private int count = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                    @Override
+                    public void onConnected(Bundle connectionHint) {
+                        Log.d(TAG, "onConnected: " + connectionHint);
+                        // Now you can use the data layer API
+                    }
+                    @Override
+                    public void onConnectionSuspended(int cause) {
+                        Log.d(TAG, "onConnectionSuspended: " + cause);
+                    }
+                })
+                .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
+                    @Override
+                    public void onConnectionFailed(ConnectionResult result) {
+                        Log.d(TAG, "onConnectionFailed: " + result);
+                    }
+                })
+                .addApi(Wearable.API)
+                .build();
+        if (!mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.connect();
+        }
+
         mEditText=(EditText)findViewById(R.id.editText1);
         mTextView=(TextView)findViewById(R.id.textView1);
         mButton=(Button)findViewById(R.id.button1);
@@ -42,6 +89,14 @@ public class MyActivity extends Activity {
         });
     }
 
+    @Override
+    protected void onDestroy() {
+        if ( mGoogleApiClient.isConnected() )
+        {
+            mGoogleApiClient.disconnect();
+        }
+        super.onDestroy();
+    }
 
     public void onClick(View v)
     {
@@ -56,7 +111,37 @@ public class MyActivity extends Activity {
     }
     public boolean sendMessage(CharSequence s)
     {
+        if (mGoogleApiClient.isConnected()) {
+            PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(PATH);
+
+            // Add data to the request
+            putDataMapRequest.getDataMap().putString(KEY_TITLE,
+                    String.format("%s %d", s, count++));
+
+            Bitmap icon = BitmapFactory.decodeResource(
+                    getResources(), R.drawable.ic_launcher);
+            Asset asset = createAssetFromBitmap(icon);
+            putDataMapRequest.getDataMap().putAsset(KEY_IMAGE, asset);
+
+            PutDataRequest request = putDataMapRequest.asPutDataRequest();
+
+            Wearable.DataApi.putDataItem(mGoogleApiClient, request)
+                    .setResultCallback(new ResultCallback<DataApi.DataItemResult>() {
+                        @Override
+                        public void onResult(DataApi.DataItemResult dataItemResult) {
+                            Log.d(TAG, "putDataItem status: "
+                                    + dataItemResult.getStatus().toString());
+                        }
+                    });
+        }
         return true;
+    }
+
+
+    private static Asset createAssetFromBitmap(Bitmap bitmap) {
+        final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteStream);
+        return Asset.createFromBytes(byteStream.toByteArray());
     }
 
     @Override

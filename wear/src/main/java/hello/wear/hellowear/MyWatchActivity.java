@@ -1,6 +1,7 @@
 package hello.wear.hellowear;
 
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 import android.support.wearable.activity.InsetActivity;
 import android.support.wearable.view.WatchViewStub;
@@ -8,6 +9,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.Wearable;
 
 import java.io.File;
 
@@ -17,9 +22,33 @@ import java.io.File;
 
 public class MyWatchActivity extends InsetActivity {
 
-    private TextView mTextView;
-    private ImageView mImageView;
-    final String pPath = new String("/Pictures/eura.jpg");
+    private static String TAG = new String("Jebum");
+    private static TextView mTextView;
+    private static ImageView mImageView;
+    final static private String pPath = new String("/Pictures/eura.jpg");
+
+    private GoogleApiClient mGoogleAppiClient = new GoogleApiClient.Builder(this)
+            .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                @Override
+                public void onConnected(Bundle connectionHint) {
+                    Log.d(TAG, "onConnected: " + connectionHint);
+                    // Now you can use the data layer API
+                }
+                @Override
+                public void onConnectionSuspended(int cause) {
+                    Log.d(TAG, "onConnectionSuspended: " + cause);
+                }
+            })
+            .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
+                @Override
+                public void onConnectionFailed(ConnectionResult result) {
+                    Log.d(TAG, "onConnectionFailed: " + result);
+                }
+            })
+            .addApi(Wearable.API)
+            .build();
+
+
 
     @Override
     public void onReadyForContent() {
@@ -32,6 +61,7 @@ public class MyWatchActivity extends InsetActivity {
                 mImageView = (ImageView) stub.findViewById(R.id.testImg);
                 //Log.d("jebum", "TextView: " + mTextView.getText());
                 Log.d("jebum", "ESD"+Environment.getExternalStorageDirectory().toString());
+
             }
         });
     }
@@ -55,5 +85,4 @@ public class MyWatchActivity extends InsetActivity {
         }
 
     }
-
 }

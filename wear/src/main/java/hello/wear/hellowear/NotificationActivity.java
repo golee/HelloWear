@@ -21,33 +21,39 @@ import java.util.concurrent.TimeUnit;
 
 public class NotificationActivity extends Activity {
 
-    private TextView mTextView;
-    private ImageView mImageView;
+    final private static String TAG = new String("Jebum");
+    public static String EXTRA_TITLE;
+    public static String EXTRA_IMAGE;
+    private static TextView mTextView;
+    private static ImageView mImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification);
+
+
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
                 mTextView = (TextView) stub.findViewById(R.id.noti_text);
                 mImageView = (ImageView) stub.findViewById(R.id.noti_image);
-
                 Intent intent = getIntent();
+
                 if ( intent != null )
                 {
-                    //mTextView.setText(intent.getStringExtra(EXTRA_TITLE));
+                    mTextView.setText(intent.getStringExtra(EXTRA_TITLE));
 
-                    //final Asset asset = intent.getParcelableExtra(EXTRA_IMAGE);
+                    final Asset asset = intent.getParcelableExtra(EXTRA_IMAGE);
 
-                //    loadBitmapFromAsset( this, asset, mImageView );
-
-
+                    loadBitmapFromAsset( getApplicationContext() , asset, mImageView );
                 }
             }
         });
+
+
+
     }
 
     public static void loadBitmapFromAsset(final Context context,
